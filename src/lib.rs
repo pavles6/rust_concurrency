@@ -1,4 +1,7 @@
-use std::{sync::mpsc, thread};
+use std::{
+    sync::{mpsc, Arc, Mutex},
+    thread,
+};
 
 pub fn moving_data_to_thread() {
     let v = vec![1, 2, 3];
@@ -46,4 +49,26 @@ pub fn channels() {
     for received in rx {
         println!("Got: {}", received)
     }
+}
+
+pub fn shared_state_concurrency() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..1000 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+
+            *num += 1;
+            println!("{}", *num);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
 }

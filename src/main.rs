@@ -1,5 +1,7 @@
-use rust_concurrency::moving_data_to_thread;
+use rust_concurrency::{channels, moving_data_to_thread};
 
 fn main() {
-    moving_data_to_thread();
+    // moving_data_to_thread();
+
+    channels();
 }
